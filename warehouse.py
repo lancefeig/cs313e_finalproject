@@ -23,6 +23,11 @@ class Inventory:
             raise ValueError("Chemical quantity with applied change is less than zero.")
         print("Sorry, this chemical is not in the inventory.")
 
+    def print_chemical(self, obj):
+        print(f"Name: {obj.name}")
+        properties_list = list(map(lambda key: f"    {key.title()}: {obj.properties[key]}", obj.properties.keys()))
+        print(*properties_list,sep='\n')
+
     def find_chemical(self, name):
         hash_key = name_to_key(name)
 
