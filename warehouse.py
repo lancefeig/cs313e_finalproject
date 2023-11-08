@@ -20,7 +20,7 @@ class Inventory:
         if obj is not None:
             if obj.quantity + change > 0:
                 obj.quantity += change
-            print("Sorry, the quantity cannot be negative.")
+            raise ValueError("Chemical quantity with applied change is less than zero.")
         print("Sorry, this chemical is not in the inventory.")
 
     def find_chemical(self, name):
