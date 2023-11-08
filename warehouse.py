@@ -1,4 +1,17 @@
+import os
+
 HASH_TABLE_SIZE = 100
+DIRECTORY = os.path.dirname(os.path.abspath(__file__)) #saves pathway of this warehouse.py
+
+class FileManager:
+    def __init__(self):
+        self.data_path = os.path.join(DIRECTORY,"data.txt") #generates pathway of data.txt
+
+    def data_in(self):
+        pass
+
+    def data_out(self):
+        pass
 
 class Inventory:
     def __init__(self):
@@ -25,25 +38,26 @@ class Inventory:
 
     def print_chemical(self, obj):
         print(f"Name: {obj.name}")
+        #format and print properties
         properties_list = list(map(lambda key: f"    {key.title()}: {obj.properties[key]}", obj.properties.keys()))
         print('\n'.join(properties_list))
 
     def find_chemical(self, name):
         hash_key = name_to_key(name)
 
-        if self.hash_table[hash_key] == []:
+        if self.hash_table[hash_key] == []: #check if bucket is empty
             return None
-        for curr in self.hash_table[hash_key]:
+        for curr in self.hash_table[hash_key]: #linearly probe for chemical name existing in bucket
             if curr.name == name:
                 return curr
         return None
 
 class Chemical:
     def __init__(self, name, properties, quantity=0):
-        self.name = name
+        self.name = name #string
         self.properties = properties #dictionary of chemical properties
-        self.quantity = quantity
-        self.hash_key = name_to_key(name)
+        self.quantity = quantity #integer
+        self.hash_key = name_to_key(name) #integer
 
 def name_to_key(string):
     #hash key based on the sum of the ASCII numbers
