@@ -26,7 +26,7 @@ class Inventory:
     def print_chemical(self, obj):
         print(f"Name: {obj.name}")
         properties_list = list(map(lambda key: f"    {key.title()}: {obj.properties[key]}", obj.properties.keys()))
-        print(*properties_list,sep='\n') #* splits the list into positional arguments
+        print('\n'.join(properties_list))
 
     def find_chemical(self, name):
         hash_key = name_to_key(name)
