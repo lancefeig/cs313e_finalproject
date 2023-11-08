@@ -8,10 +8,15 @@ class FileManager:
         self.data_path = os.path.join(DIRECTORY,"data.txt") #generates pathway of data.txt
 
     def data_in(self):
-        pass
+        try:
+            with open(self.data_path,"r") as data_file: #content manager
+                pass
+        except IOError: #catch error if data.txt does not exist
+            print("No data was found. Empty inventory initialized.")
 
     def data_out(self):
-        pass
+        with open(self.data_path,"w") as data_file: #content manager
+            pass
 
 class Inventory:
     def __init__(self):
