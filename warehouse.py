@@ -104,37 +104,44 @@ class OrderQueue:
     def __init__(self):
         self.order_queue = [] #list of dictionaries
 
-    def enqueue_order(self, order_id, customer, chemicals_dict): #idk what should go in customer. Just name?
+    def enqueue_order(self, order_id, customer, chemicals_dict): 
         new_order = {
             'order_id': order_id,
             'customer': customer,
             'chemicals_dict': chemicals_dict
         }
         self.order_queue.append(new_order)
-        self.order_queue.sort(key=lambda x: x['order_id'])  #make sure the records are sorted by order ID for binary search
 
-    def process_order(self):#What are we supposed to DO with the processed order?
-        if len(self.order_queue) > 0: #check if empty
-            processed_order = self.order_queue.pop(0)#removes first one as processed
-            print(f"Processing order {processed_order['order_id']} for {processed_order['customer']}")
-        else:
+    def process_order(self):
+
+        if not self.order_queue: #if order_queue empty
             print("No orders to process.")
+            return
 
-    def binary_search_order(self, order_id): #use binary search to find order number by order ID
-        low, high = 0, len(self.order_queue) - 1
+        current_order = self.order_queue.pop(0) #dequeue order from front, assign to current_order
+        print(f"Processing order {current_order['order_id']} for {current_order['customer']}")
 
-        while low <= high:
-            mid = (low + high) // 2
-            mid_order_id = self.order_queue[mid]['order_id']
+        for chemical, desired_quantity in current_order['chemicals_dict'].items(): #iterate through all chemicals in chemicals_dict
+            if chemical not in chemical_inventory: #doesn't exist
+                ignore_fill = input(f"Chemical {chemical} does not exist. Ignore and fill? (y/n): ").lower() #asks if you want to ignore that it doesn't exist and fill
+                if ignore_fill == 'n': #didn't choose to ignore and fill
+                    self.order_queue.append(current_order)  # Add the order back to the queue
+                    print("Order added back to the queue.")
+                    return #what am i supposed to do if they say yes lol
 
-            if mid_order_id == order_id:
-                return self.order_queue[mid]
-            elif mid_order_id < order_id:
-                low = mid + 1
-            else:
-                high = mid - 1
+            if chemical_inventory.get(chemical, 0) < desired_quantity: #lower than desired
+                ignore_quantity = input(f"Available quantity of {chemical} is too low. Ignore and fill? (y/n): ").lower()
+                if ignore_quantity == 'n':
+                    self.order_queue.append(current_order)  # Add the order back to the queue
+                    print("Order added back to the queue.")
+                    return
 
-        return None
+        # If all chemicals can be filled, update the chemical quantities
+        for chemical, desired_quantity in current_order['chemicals_dict'].items():
+            chemical_inventory[chemical] -= desired_quantity
+
+        print("Order successfully processed and chemicals filled.")
+
 
 def main():
     pass
