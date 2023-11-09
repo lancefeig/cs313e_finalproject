@@ -1,20 +1,21 @@
 import os
 
 HASH_TABLE_SIZE = 100
-#saves pathway of this warehouse.py
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+FILE_IN = "data.txt"
+FILE_OUT = "data.txt"
 PROPERTIES = ["molar mass", "density"]
 
 class DataManager:
-    def __init__(self):
-        #generates pathway of data.txt
-        self.data_path = os.path.join(DIRECTORY,"data.txt")
+    def __init__(self, directory, file_in, file_out):
+        self.data_path_in = os.path.join(directory, file_in)
+        self.data_path_out = os.path.join(directory, file_out)
         self.inventory = Inventory()
         self.queue = OrderQueue(self.inventory)
 
     def data_in(self):
         try:
-            with open(self.data_path,"r",encoding="utf-8") as file:
+            with open(self.data_path_in,"r",encoding="utf-8") as file:
                 n_chemicals = int(file.readline().strip)
                 n_orders = int(file.readline().strip)
                 #enter in n chemicals (each chemical takes up 2 lines: name & quantity, property values)
@@ -40,7 +41,7 @@ class DataManager:
             print("No data was found. Empty inventory initialized.")
 
     def data_out(self):
-        with open(self.data_path,"w",encoding="utf-8") as file:
+        with open(self.data_path_out,"w",encoding="utf-8") as file:
             pass
 
     def interface(self):
@@ -105,7 +106,7 @@ class OrderQueue:
         self.inventory = inventory
         self.order_queue = [] #list of dictionaries
 
-    def enqueue_order(self, order_id, customer, chemicals_dict): 
+    def enqueue_order(self, order_id, customer, chemicals_dict):
         new_order = {
             'order_id': order_id,
             'customer': customer,
@@ -153,6 +154,6 @@ class OrderQueue:
         print("Order successfully processed and chemicals filled.")
 
 def main():
-    pass
+    the_warehouse = DataManager(DIRECTORY, FILE_IN, FILE_OUT)
 
 main()
