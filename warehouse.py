@@ -125,7 +125,8 @@ class OrderQueue:
         order_copy = current_order['chemicals_dict'].copy()  # Create a copy of the original order
 
         for chemical, desired_quantity in current_order['chemicals_dict'].items(): #start iterating
-            if chemical not in self.inventory.hash_table: #if it doesn't exist
+            chemical_obj = self.inventory.find_chemical(chemical)
+            if chemical_obj is None:
                 ignore_fill = input(f"Chemical {chemical} does not exist. Ignore and fill? (y/n): ").lower()
                 if ignore_fill == 'y': #still want the order
                     print(f"Ignoring {chemical}.")
@@ -135,7 +136,7 @@ class OrderQueue:
                     print("Order added back to the queue.") #can change the message here
                     return #end bc now its at the back of the queue
 
-            elif self.inventory.find_chemical(chemical).quantity < desired_quantity: #insufficient quantity
+            elif chemical_obj.quantity < desired_quantity: #insufficient quantity
                 ignore_quantity = input(f"Available quantity of {chemical} is too low. Ignore and fill? (y/n): ").lower()
                 if ignore_quantity == 'y': #still want the order
                     print(f"Ignoring {chemical}.")
