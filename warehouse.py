@@ -101,7 +101,8 @@ def name_to_key(string):
     return sum(list(map(lambda i: ord(i), string))) % HASH_TABLE_SIZE
 
 class OrderQueue:
-    def __init__(self):
+    def __init__(self, inventory):
+        self.inventory = inventory
         self.order_queue = [] #list of dictionaries
 
     def enqueue_order(self, order_id, customer, chemicals_dict): 
@@ -124,7 +125,7 @@ class OrderQueue:
         order_copy = current_order['chemicals_dict'].copy()  # Create a copy of the original order
 
         for chemical, desired_quantity in current_order['chemicals_dict'].items(): #start iterating
-            if chemical not in chemical_inventory: #if it doesn't exist
+            if chemical not in self.inventory.hash_table: #if it doesn't exist
                 ignore_fill = input(f"Chemical {chemical} does not exist. Ignore and fill? (y/n): ").lower()
                 if ignore_fill == 'y': #still want the order
                     print(f"Ignoring {chemical}.")
@@ -134,7 +135,7 @@ class OrderQueue:
                     print("Order added back to the queue.") #can change the message here
                     return #end bc now its at the back of the queue
 
-            elif chemical_inventory.get(chemical, 0) < desired_quantity: #insufficient quantity
+            elif self.inventory.find_chemical(chemical).quantity < desired_quantity: #insufficient quantity
                 ignore_quantity = input(f"Available quantity of {chemical} is too low. Ignore and fill? (y/n): ").lower()
                 if ignore_quantity == 'y': #still want the order
                     print(f"Ignoring {chemical}.")
@@ -146,7 +147,7 @@ class OrderQueue:
 
         for chemical, desired_quantity in order_copy.items():#look through the copy
              # Use update_chemical to check and update the quantities
-            inventory.update_chemical(chemical, -desired_quantity) #will catch if less than 0
+            self.inventory.update_chemical(chemical, -desired_quantity) #will catch if less than 0
 
         print("Order successfully processed and chemicals filled.")
 
