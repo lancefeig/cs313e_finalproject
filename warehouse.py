@@ -3,7 +3,7 @@ import os
 HASH_TABLE_SIZE = 100
 #saves pathway of this warehouse.py
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-PROPERTIES = ["melting point","molar mass"]
+PROPERTIES = ["molar mass", "density"]
 
 class DataManager:
     def __init__(self):
@@ -17,23 +17,23 @@ class DataManager:
             with open(self.data_path,"r",encoding="utf-8") as file:
                 n_chemicals = int(file.readline().strip)
                 n_orders = int(file.readline().strip)
-                #enter in n chemicals
-                for _ in range(n_chemicals):
+                #enter in n chemicals (each chemical takes up 2 lines: name & quantity, property values)
+                for _ in range(n_chemicals*2):
                     attributes = file.readline().split()
-                    # pop chemmical name and quantity
-                    name = attributes.pop(0)
-                    quantity = int(attributes.pop(0))
-                    properties = dict(zip(PROPERTIES, attributes))
-                    new = Chemical(name, quantity, properties)
+                    name = attributes[0]
+                    quantity = float(attributes[1])
+                    properties_lst = file.readline().split()
+                    properties_dict = dict(zip(PROPERTIES, [float(x) for x in properties_lst]))
+                    new = Chemical(name, quantity, properties_dict)
                     self.inventory.add_chemical(new)
                 #enter in n_orders (each order takes up 3 lines: customer & order id, chemicals, quantities)
                 for _ in range(n_orders*3):
                     attributes = file.readline().split()
                     customer = attributes[0]
-                    order_id = attributes[1]
+                    order_id = int(attributes[1])
                     chemicals_lst = file.readline().split()
-                    quantities_lst = [int(x) for x in file.readline().split()]
-                    chemicals_dict = dict(zip(chemicals_lst, quantities_lst))
+                    quantities_lst = file.readline().split()
+                    chemicals_dict = dict(zip(chemicals_lst, [float(x) for x in quantities_lst]))
                     self.queue.enqueue_order(order_id, customer, chemicals_dict)
         #catch error if data.txt does not exist
         except IOError:
