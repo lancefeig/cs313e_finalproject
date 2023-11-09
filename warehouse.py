@@ -121,27 +121,33 @@ class OrderQueue:
         current_order = self.order_queue.pop(0) #dequeue order from front, assign to current_order
         print(f"Processing order {current_order['order_id']} for {current_order['customer']}")
 
-        for chemical, desired_quantity in current_order['chemicals_dict'].items(): #iterate through all chemicals in chemicals_dict
-            if chemical not in chemical_inventory: #doesn't exist
-                ignore_fill = input(f"Chemical {chemical} does not exist. Ignore and fill? (y/n): ").lower() #asks if you want to ignore that it doesn't exist and fill
-                if ignore_fill == 'n': #didn't choose to ignore and fill
-                    self.order_queue.append(current_order)  # Add the order back to the queue
-                    print("Order added back to the queue.")
-                    return #what am i supposed to do if they say yes lol
+        order_copy = current_order['chemicals_dict'].copy()  # Create a copy of the original order
 
-            if chemical_inventory.get(chemical, 0) < desired_quantity: #lower than desired
+        for chemical, desired_quantity in current_order['chemicals_dict'].items():
+            if chemical not in chemical_inventory:
+                ignore_fill = input(f"Chemical {chemical} does not exist. Ignore and fill? (y/n): ").lower()
+                if ignore_fill == 'y':
+                    print(f"Ignoring {chemical}.")
+                    del order_copy[chemical]  # Remove the chemical from the copy of the order
+                else:
+                    self.order_queue.append(current_order)
+                    print("Order added back to the queue.") #can change the message here
+                    return
+
+            elif chemical_inventory.get(chemical, 0) < desired_quantity:
                 ignore_quantity = input(f"Available quantity of {chemical} is too low. Ignore and fill? (y/n): ").lower()
-                if ignore_quantity == 'n':
-                    self.order_queue.append(current_order)  # Add the order back to the queue
+                if ignore_quantity == 'y':
+                    print(f"Ignoring {chemical}.")
+                    del order_copy[chemical]  # Remove the chemical from the copy of the order
+                else:
+                    self.order_queue.append(current_order)
                     print("Order added back to the queue.")
                     return
 
-        # If all chemicals can be filled, update the chemical quantities
-        for chemical, desired_quantity in current_order['chemicals_dict'].items():
+        for chemical, desired_quantity in order_copy.items():#look through the copy
             chemical_inventory[chemical] -= desired_quantity
 
         print("Order successfully processed and chemicals filled.")
-
 
 def main():
     pass
