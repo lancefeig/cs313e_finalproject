@@ -145,7 +145,8 @@ class OrderQueue:
                     return #end bc now its at the back of the queue
 
         for chemical, desired_quantity in order_copy.items():#look through the copy
-            chemical_inventory[chemical] -= desired_quantity #subtract from all the existing quantities
+             # Use update_chemical to check and update the quantities
+            inventory.update_chemical(chemical, -desired_quantity) #will catch if less than 0
 
         print("Order successfully processed and chemicals filled.")
 
