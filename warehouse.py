@@ -44,7 +44,7 @@ class DataManager:
         with open(self.data_path_out,"w",encoding="utf-8") as file:
             pass
 
-    def interface(self):
+    def main_loop(self):
         pass
 
 class Inventory:
@@ -96,10 +96,6 @@ class Chemical:
         self.quantity = quantity #integer
         self.properties = properties #dictionary of chemical properties
         self.hash_key = name_to_key(name) #integer
-
-def name_to_key(string):
-    #hash key based on the sum of the ASCII numbers
-    return sum(list(map(lambda i: ord(i), string))) % HASH_TABLE_SIZE
 
 class OrderQueue:
     def __init__(self, inventory):
@@ -153,7 +149,11 @@ class OrderQueue:
 
         print("Order successfully processed and chemicals filled.")
 
-def main():
-    the_warehouse = DataManager(DIRECTORY, FILE_IN, FILE_OUT)
+def name_to_key(string):
+    #hash key based on the sum of the ASCII numbers
+    return sum(list(map(lambda i: ord(i), string))) % HASH_TABLE_SIZE
 
-main()
+if __name__ == "__main__":
+    the_warehouse = DataManager(DIRECTORY, FILE_IN, FILE_OUT)
+    the_warehouse.data_in()
+    the_warehouse.main_loop()
