@@ -123,29 +123,29 @@ class OrderQueue:
 
         order_copy = current_order['chemicals_dict'].copy()  # Create a copy of the original order
 
-        for chemical, desired_quantity in current_order['chemicals_dict'].items():
-            if chemical not in chemical_inventory:
+        for chemical, desired_quantity in current_order['chemicals_dict'].items(): #start iterating
+            if chemical not in chemical_inventory: #if it doesn't exist
                 ignore_fill = input(f"Chemical {chemical} does not exist. Ignore and fill? (y/n): ").lower()
-                if ignore_fill == 'y':
+                if ignore_fill == 'y': #still want the order
                     print(f"Ignoring {chemical}.")
                     del order_copy[chemical]  # Remove the chemical from the copy of the order
-                else:
+                else: #don't ignore and fill
                     self.order_queue.append(current_order)
                     print("Order added back to the queue.") #can change the message here
-                    return
+                    return #end bc now its at the back of the queue
 
-            elif chemical_inventory.get(chemical, 0) < desired_quantity:
+            elif chemical_inventory.get(chemical, 0) < desired_quantity: #insufficient quantity
                 ignore_quantity = input(f"Available quantity of {chemical} is too low. Ignore and fill? (y/n): ").lower()
-                if ignore_quantity == 'y':
+                if ignore_quantity == 'y': #still want the order
                     print(f"Ignoring {chemical}.")
                     del order_copy[chemical]  # Remove the chemical from the copy of the order
-                else:
+                else:#don't ignore and fill
                     self.order_queue.append(current_order)
                     print("Order added back to the queue.")
-                    return
+                    return #end bc now its at the back of the queue
 
         for chemical, desired_quantity in order_copy.items():#look through the copy
-            chemical_inventory[chemical] -= desired_quantity
+            chemical_inventory[chemical] -= desired_quantity #subtract from all the existing quantities
 
         print("Order successfully processed and chemicals filled.")
 
