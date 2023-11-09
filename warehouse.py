@@ -10,7 +10,7 @@ class DataManager:
         #generates pathway of data.txt
         self.data_path = os.path.join(DIRECTORY,"data.txt")
         self.inventory = Inventory()
-        self.queue = OrderQueue()
+        self.queue = OrderQueue(self.inventory)
 
     def data_in(self):
         try:
