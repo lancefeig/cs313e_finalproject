@@ -29,7 +29,7 @@ class DataManager:
                 #enter in n_orders (each order takes up 3 lines: customer & order id, chemicals, quantities)
                 for _ in range(n_orders*3):
                     attributes = file.readline().split()
-                    customer = attributes[0]
+                    customer = ' '.join(attributes[0].split('_'))
                     order_id = int(attributes[1])
                     chemicals_lst = file.readline().split()
                     quantities_lst = file.readline().split()
