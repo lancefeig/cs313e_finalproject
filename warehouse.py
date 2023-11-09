@@ -113,7 +113,7 @@ class OrderQueue:
         self.order_queue.append(new_order)
         self.order_queue.sort(key=lambda x: x['order_id'])  #make sure the records are sorted by order ID for binary search
 
-    def process_order_queue(self):#What are we supposed to DO with the processed order?
+    def process_order(self):#What are we supposed to DO with the processed order?
         if len(self.order_queue) > 0: #check if empty
             processed_order = self.order_queue.pop(0)#removes first one as processed
             print(f"Processing order {processed_order['order_id']} for {processed_order['customer']}")
