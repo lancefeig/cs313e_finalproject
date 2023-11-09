@@ -3,6 +3,7 @@ import os
 HASH_TABLE_SIZE = 100
 #saves pathway of this warehouse.py
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+PROPERTIES = ["melting point","molar mass"]
 
 class DataManager:
     def __init__(self):
@@ -16,14 +17,13 @@ class DataManager:
             with open(self.data_path,"r",encoding="utf-8") as file:
                 n_chemicals = int(file.readline().strip)
                 n_orders = int(file.readline().strip)
-                properties_lst = file.readline().split()
                 #enter in n chemicals
                 for _ in range(n_chemicals):
                     attributes = file.readline().split()
                     # pop chemmical name and quantity
                     name = attributes.pop(0)
                     quantity = int(attributes.pop(0))
-                    properties = dict(zip(properties_lst, attributes))
+                    properties = dict(zip(PROPERTIES, attributes))
                     new = Chemical(name, quantity, properties)
                     self.inventory.add_chemical(new)
                 #enter in n_orders (each order takes up 3 lines: customer & order id, chemicals, quantities)
