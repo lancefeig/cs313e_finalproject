@@ -20,7 +20,7 @@ class DataManager:
                 #enter in n chemicals (each chemical takes up 2 lines: name & quantity, property values)
                 for _ in range(n_chemicals*2):
                     attributes = file.readline().split()
-                    name = attributes[0]
+                    name = ' '.join(attributes[0].split('_'))
                     quantity = float(attributes[1])
                     properties_lst = file.readline().split()
                     properties_dict = dict(zip(PROPERTIES, [float(x) for x in properties_lst]))
