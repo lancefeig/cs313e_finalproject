@@ -139,8 +139,8 @@ class OrderQueue:
             elif chemical_obj.quantity < desired_quantity: #insufficient quantity
                 ignore_quantity = input(f"Available quantity of {chemical} is too low. Ignore and fill? (y/n): ").lower()
                 if ignore_quantity == 'y': #still want the order
-                    print(f"Ignoring {chemical}.")
-                    del order_copy[chemical]  # Remove the chemical from the copy of the order
+                    print(f"{chemical}: Instead of {desired_quantity}, you will receive {chemical_obj.quantity}.")
+                    order_copy[chemical] = chemical_obj.quantity  #change the desired quantity to available quantity
                 else:#don't ignore and fill
                     self.order_queue.append(current_order)
                     print("Order added back to the queue.")
