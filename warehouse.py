@@ -178,5 +178,4 @@ def name_to_key(string):
 
 if __name__ == "__main__":
     the_warehouse = DataManager(DIRECTORY, FILE_IN, FILE_OUT)
-    the_warehouse.data_in()
     the_warehouse.main_loop()
