@@ -90,6 +90,13 @@ class Inventory:
                 return curr
         return None
 
+    def alphabetical_list(self):
+        flat = []
+        for row in self.hash_table:
+            flat.extend(row)
+        flat.sort(key=lambda x: x.name)
+        return flat
+
 class Chemical:
     def __init__(self, name, quantity, properties):
         self.name = name #string
