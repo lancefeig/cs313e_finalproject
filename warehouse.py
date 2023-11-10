@@ -15,14 +15,14 @@ class DataManager:
 
     def data_in(self):
         try:
-            with open(self.data_path_in,"r",encoding="utf-8") as file:
+            with open(self.data_path_in, "r", encoding="utf-8") as file:
                 n_chemicals = int(file.readline().strip)
                 n_orders = int(file.readline().strip)
                 #enter in n chemicals (each chemical takes up 2 lines: name & quantity, property values)
                 for _ in range(n_chemicals*2):
                     attributes = file.readline().split()
-                    name = ' '.join(attributes[0].split('_'))
-                    quantity = float(attributes[1])
+                    name = attributes[0].replace('_', ' ')
+                    quantity = round(float(attributes[1]), 2)
                     properties_lst = file.readline().split()
                     properties_dict = dict(zip(PROPERTIES, [float(x) for x in properties_lst]))
                     new = Chemical(name, quantity, properties_dict)
@@ -30,19 +30,34 @@ class DataManager:
                 #enter in n_orders (each order takes up 3 lines: customer & order id, chemicals, quantities)
                 for _ in range(n_orders*3):
                     attributes = file.readline().split()
-                    customer = ' '.join(attributes[0].split('_'))
+                    customer = attributes[0].replace('_', ' ')
                     order_id = int(attributes[1])
-                    chemicals_lst = file.readline().split()
+                    chemicals_lst = list(map(lambda x: x.replace('_', ' '), file.readline().split()))
                     quantities_lst = file.readline().split()
-                    chemicals_dict = dict(zip(chemicals_lst, [float(x) for x in quantities_lst]))
+                    chemicals_dict = dict(zip(chemicals_lst, [round(float(x), 2) for x in quantities_lst]))
                     self.queue.enqueue_order(order_id, customer, chemicals_dict)
         #catch error if data.txt does not exist
         except IOError:
             print("No data was found. Empty inventory initialized.")
 
     def data_out(self):
-        with open(self.data_path_out,"w",encoding="utf-8") as file:
-            pass
+        with open(self.data_path_out, "w", encoding="utf-8") as file:
+            file.write(f"\n {self.inventory.n} \n {len(self.queue.order_queue)}")
+            for chemical in self.inventory.alphabetical_list():
+                name = chemical.name.replace(' ', '_')
+                quantity = round(chemical.quantity, 2)
+                properties = list(map(lambda x: f"{x} ", chemical.properties.values()))
+                file.write(f"\n {name} {quantity} \n")
+                file.writelines(properties)
+            for order in self.queue.order_queue:
+                customer = order['customer'].replace(' ', '_')
+                order_id = order['order_id']
+                chemicals_lst = list(map(lambda x: f"{x.replace(' ', '_')} ", order['chemicals_dict'].keys()))
+                quantities_lst = list(map(lambda x: f"{x} ", order['chemicals_dict'].values()))
+                file.write(f"\n {customer} {order_id} \n")
+                file.writelines(chemicals_lst)
+                file.write('\n')
+                file.writelines(quantities_lst)
 
     def main_loop(self):
         pass
@@ -94,6 +109,7 @@ class Inventory:
         flat = []
         for row in self.hash_table:
             flat.extend(row)
+        #sorts flattened hash table by alphabetical order
         flat.sort(key=lambda x: x.name)
         return flat
 
