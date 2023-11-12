@@ -112,6 +112,16 @@ class Inventory:
         #sorts flattened hash table by alphabetical order
         flat.sort(key=lambda x: x.name)
         return flat
+    
+    #################AVA ADDED THIS to work with quantity checker##################
+    def quantity_sorted_list(self):
+        # Returns a list of all chemicals sorted by quantity in ascending order
+        flat = []
+        for row in self.hash_table:
+            flat.extend(row)
+        # Sorts flattened hash table by quantity
+        flat.sort(key=lambda x: x.quantity)
+        return flat
 
 class Chemical:
     def __init__(self, name, quantity, properties):
@@ -171,6 +181,31 @@ class OrderQueue:
             self.inventory.update_chemical(chemical, -desired_quantity) #will catch if less than 0
 
         print("Order successfully processed and chemicals filled.")
+
+class QuantityChecker:
+    def __init__(self, inventory):
+        self.sorted_chemicals = inventory.quantity_sorted_list()
+
+    def binary_search(self, number):
+        # Binary search for the index of the chemical closest to the given quantity
+        low, high = 0, len(self.sorted_chemicals) - 1
+        while low <= high:
+            mid = (low + high) // 2
+            mid_quantity = self.sorted_chemicals[mid].quantity
+            if mid_quantity == number:
+                return mid
+            elif mid_quantity < number:
+                low = mid + 1
+            else:
+                high = mid - 1
+        # Return the index of the closest chemical (rounded up)
+        return low if low < len(self.sorted_chemicals) else len(self.sorted_chemicals) - 1
+    
+    def in_order(self, obj):
+    
+        return self.sorted_chemicals
+
+    
 
 def name_to_key(string):
     #hash key based on the sum of the ASCII numbers
