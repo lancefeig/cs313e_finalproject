@@ -64,7 +64,7 @@ class DataManager:
 
 class Inventory:
     def __init__(self):
-        self.hash_table = [[]]*HASH_TABLE_SIZE #empty 2-D array
+        self.hash_table = [[] for x in range(HASH_TABLE_SIZE)] #empty 2-D array
         self.n = 0
 
     def add_chemical(self, obj):
