@@ -1,20 +1,14 @@
 6
-2
+0
 1,3-cyclohexadiene 30.99
 80.13 841 
 acetic_acid 740.11
 60.052 1.05 
-acetone 800.9
+acetone 799.8
 58.08 784.0 
-benzene 2010.1
+benzene 1995.85
 78.11 876 
-methane 100.89
+methane 90.49
 16.0425 0.657 
 pentane 20.56
 72.15 626.0 
-Joe_Bob 17853
-methane benzene 
-10.4 11.25 
-Jimmy_Johnson 8739
-acetone 
-1.1 
