@@ -88,7 +88,7 @@ class DataManager:
                     properties_lst = []
 
                     for i, prop in enumerate(PROPERTIES):
-                        print("Please enter the {prop} in {PROPERTIES_UNITS[i]}:")
+                        print(f"Please enter the {prop} in {PROPERTIES_UNITS[i]}:")
                         properties_lst.append(input())
 
                     properties_dict = dict(zip(PROPERTIES, properties_lst))
@@ -130,7 +130,6 @@ class DataManager:
                     for obj in obj_range:
                         print(obj)
                     print()
-
                 # Display Inventory Based Alphabetically
                 case 'd':
                     flat = self.inventory.alphabetical_list()
