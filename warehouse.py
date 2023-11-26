@@ -1,3 +1,18 @@
+"""
+File: warehouse.py
+Description: Chemical warehouse simulator that tracks chemical inventory,
+including details on chemical properties, like molar mass, density, and other quantities,
+as well as tracks orders, which will update the inventory in the system as they are processed.
+
+Student Names: Lance Feig, Ava Tran
+Student UT EIDs: lmf2599, XXXXXXX
+
+Course Name: CS 313E
+Unique Number: 52595
+Date Created: 10/29/23
+Date Last Modified: 11/25/23
+"""
+
 import os
 import time
 
@@ -20,6 +35,7 @@ Exit the Warehouse (e)
 ------------------------------------------\n"""
 
 class DataManager:
+    """Imports data to and exports data from data.txt"""
     def __init__(self, directory, file_in, file_out):
         self.data_path_in = os.path.join(directory, file_in)
         self.data_path_out = os.path.join(directory, file_out)
@@ -28,45 +44,58 @@ class DataManager:
         self.quantities = QuantityChecker(self.inventory)
 
     def data_in(self):
+        """Imports chemical and order data from data.txt"""
         try:
             with open(self.data_path_in, "r", encoding="utf-8") as file:
                 n_chemicals = int(file.readline().strip())
                 n_orders = int(file.readline().strip())
-                #enter in n chemicals (each chemical takes up 2 lines: name & quantity, property values)
+                # Import n chemicals
+                # Each chemical takes up 2 lines: name & quantity, property values
                 for _ in range(n_chemicals):
                     attributes = file.readline().split()
                     name = attributes[0].replace('_', ' ').lower()
                     quantity = round(float(attributes[1]), 2)
-                    properties_lst = list(map(lambda x: x.replace('_', ' '), file.readline().split()))
+                    properties_lst = list(map(lambda x: x.replace('_', ' '), \
+                                              file.readline().split()))
                     properties_dict = dict(zip(PROPERTIES, properties_lst))
                     new = Chemical(name, quantity, properties_dict)
                     self.inventory.add_chemical(new)
-                #enter in n_orders (each order takes up 3 lines: customer & order id, chemicals, quantities)
+                # Import n orders
+                # Each order takes up 3 lines: customer & order id, chemicals, quantities
                 for _ in range(n_orders):
                     attributes = file.readline().split()
                     customer = attributes[0].replace('_', ' ').title()
                     order_id = int(attributes[1])
-                    chemicals_lst = list(map(lambda x: x.replace('_', ' '), file.readline().split()))
+                    chemicals_lst = list(map(lambda x: x.replace('_', ' '), \
+                                             file.readline().split()))
                     quantities_lst = file.readline().split()
-                    chemicals_dict = dict(zip(chemicals_lst, [round(float(x), 2) for x in quantities_lst]))
+                    chemicals_dict = dict(zip(chemicals_lst, \
+                                              [round(float(x), 2) for x in quantities_lst]))
                     self.queue.enqueue_order(order_id, customer, chemicals_dict)
-        #catch error if data.txt does not exist
+        # Catch error if data.txt does not exist; file will be created on data export
         except IOError:
             print("No data was found. Empty inventory initialized.\n")
 
     def data_out(self):
+        """Exports chemical and order data to data.txt"""
         with open(self.data_path_out, "w", encoding="utf-8") as file:
             file.write(f"{self.inventory.n}\n{len(self.queue.order_queue)}")
+            # Export n chemicals
+            # Each chemical takes up 2 lines: name & quantity, property values
             for chemical in self.inventory.alphabetical_list():
                 name = chemical.name.replace(' ', '_').lower()
                 quantity = round(chemical.quantity, 2)
-                properties = list(map(lambda x: f"{x.replace(' ', '_')} ", chemical.properties.values()))
+                properties = list(map(lambda x: f"{x.replace(' ', '_')} ", \
+                                      chemical.properties.values()))
                 file.write(f"\n{name} {quantity}\n")
                 file.writelines(properties)
+            # Export n orders
+            # Each order takes up 3 lines: customer & order id, chemicals, quantities
             for order in self.queue.order_queue:
                 customer = order['customer'].replace(' ', '_').title()
                 order_id = order['order_id']
-                chemicals_lst = list(map(lambda x: f"{x.replace(' ', '_')} ", order['chemicals_dict'].keys()))
+                chemicals_lst = list(map(lambda x: f"{x.replace(' ', '_')} ", \
+                                         order['chemicals_dict'].keys()))
                 quantities_lst = list(map(lambda x: f"{x} ", order['chemicals_dict'].values()))
                 file.write(f"\n{customer} {order_id}\n")
                 file.writelines(chemicals_lst)
@@ -74,6 +103,7 @@ class DataManager:
                 file.writelines(quantities_lst)
 
     def main_loop(self):
+        """Prompts the user for menu options and executes"""
         self.data_in()
 
         while True:
@@ -154,11 +184,13 @@ class DataManager:
         print("Inventory and pending orders have been saved.\n")
 
 class Inventory:
+    """Stores chemicals in a hash table with linear bucket probing"""
     def __init__(self):
         self.hash_table = [[] for x in range(HASH_TABLE_SIZE)] #empty 2-D array
         self.n = 0
 
     def add_chemical(self, obj):
+        """Adds a chemical object to the hash table"""
         if self.find_chemical(obj.name) is None:
             self.hash_table[obj.hash_key].append(obj)
             self.n += 1
@@ -167,6 +199,7 @@ class Inventory:
         print("Sorry, this chemical is already in the inventory. Please update the quantity instead.\n")
 
     def remove_chemical(self, name):
+        """Removes a chemical object from the hash table"""
         obj = self.find_chemical(name)
         if obj is not None:
             self.hash_table[obj.hash_key].remove(obj)
@@ -176,6 +209,7 @@ class Inventory:
         print("Sorry, this chemical is not in the inventory\n")
 
     def update_chemical(self, name, change):
+        """Changes the quantity of a chemical, increase or decrease"""
         obj = self.find_chemical(name)
         if obj is not None:
             if obj.quantity + change > 0:
@@ -187,6 +221,7 @@ class Inventory:
         print("Sorry, this chemical is not in the inventory.\n")
 
     def find_chemical(self, name):
+        """Returns chemical object from searching by name"""
         hash_key = name_to_key(name)
         #check if bucket is empty
         if self.hash_table[hash_key] == []:
@@ -198,6 +233,7 @@ class Inventory:
         return None
 
     def alphabetical_list(self):
+        """Returns a flat inventory list sorted alphabeticaly"""
         flat = []
         for row in self.hash_table:
             flat.extend(row)
@@ -207,6 +243,7 @@ class Inventory:
 
     #################AVA ADDED THIS to work with quantity checker##################
     def quantity_sorted_list(self):
+        """Returns a flat inventory list sorted by chemical quantity in ascending order"""
         # Returns a list of all chemicals sorted by quantity in ascending order
         flat = []
         for row in self.hash_table:
@@ -216,9 +253,10 @@ class Inventory:
         return flat
 
 class Chemical:
+    """Chemical objects containing name, quantity, and properties"""
     def __init__(self, name, quantity, properties):
         self.name = name #string
-        self.quantity = quantity #integer
+        self.quantity = quantity #float
         self.properties = properties #dictionary of chemical properties
         self.hash_key = name_to_key(name) #integer
 
@@ -232,11 +270,13 @@ class Chemical:
         return '\n'.join(print_form)
 
 class OrderQueue:
+    """Stores customer orders in a priority queue"""
     def __init__(self, inventory):
         self.inventory = inventory
         self.order_queue = [] #list of dictionaries
 
     def enqueue_order(self, order_id, customer, chemicals_dict):
+        """Adds order to the end of the queue"""
         new_order = {
             'order_id': order_id,
             'customer': customer,
@@ -246,6 +286,7 @@ class OrderQueue:
         print(f"Order #{new_order['order_id']} for {new_order['customer']} sucessfully queued.\n")
 
     def process_order(self):
+        """Pops order from the front of the queue and processes chemical desired chemical quantities"""
         if not self.order_queue: #if order_queue empty
             print("No orders to process.\n")
             return
@@ -284,11 +325,13 @@ class OrderQueue:
         print(f"Order successfully processed and {len(order_copy)} chemicals filled.\n")
 
 class QuantityChecker:
+    """Conducts searches within the inventory based on chemical quantity"""
     def __init__(self, inventory):
         self.inventory = inventory
         self.sorted_chemicals = inventory.quantity_sorted_list()
 
     def binary_search(self, number):
+        """Binary search on the flat inventory list"""
         self.sorted_chemicals = self.inventory.quantity_sorted_list()
         # Binary search for the index of the chemical closest to the given quantity
         low, high = 0, len(self.sorted_chemicals) - 1
@@ -306,9 +349,8 @@ class QuantityChecker:
         return index, self.sorted_chemicals
 
 def name_to_key(string):
-    #hash key based on the sum of the ASCII numbers
+    """Return hash key based on the sum of the ASCII values"""
     return sum(list(map(lambda i: ord(i), string))) % HASH_TABLE_SIZE
 
-if __name__ == "__main__":
-    the_warehouse = DataManager(DIRECTORY, FILE_IN, FILE_OUT)
-    the_warehouse.main_loop()
+the_warehouse = DataManager(DIRECTORY, FILE_IN, FILE_OUT)
+the_warehouse.main_loop()
