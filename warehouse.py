@@ -5,7 +5,7 @@ including details on chemical properties, like molar mass, density, and other qu
 as well as tracks orders, which will update the inventory in the system as they are processed.
 
 Student Names: Lance Feig, Ava Tran
-Student UT EIDs: lmf2599, XXXXXXX
+Student UT EIDs: lmf2599, act2829
 
 Course Name: CS 313E
 Unique Number: 52595
