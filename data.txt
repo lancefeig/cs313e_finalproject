@@ -1,20 +1,22 @@
-6
+7
 2
 1,3-cyclohexadiene 30.99
-80.13 841
-acetic_acid 740.11
-60.052 1.05
+80.13 841 
+acetic_acid 729.61
+60.052 1.05 
+argon 30.12
+50 40 
 benzene 1995.85
-78.11 876
-hydrogen 566.8
-2 89.88
+78.11 876 
+hydrogen 562.1
+2 89.88 
 methane 90.49
-16.0425 0.657
+16.0425 0.657 
 pentane 60.88
-72.15 626.0
-Abby_Lee_Miller 20231126142511
-acetic_acid hydrogen cyclopentane
-10.5 4.7 3.0
+72.15 626.0 
 Judge_Judy 20231126142654
-chloroform
-100.74
+chloroform 
+100.74 
+Joe_Bob 20231126232836
+benzene water 
+50.78 60.0 
