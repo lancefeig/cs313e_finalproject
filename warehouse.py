@@ -242,7 +242,7 @@ class Inventory:
         return None
 
     def alphabetical_list(self):
-        """Returns a flat inventory list sorted alphabeticaly"""
+        """Returns a flat inventory list sorted alphabetically"""
         flat = []
         for row in self.hash_table:
             flat.extend(row)
