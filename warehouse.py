@@ -209,7 +209,7 @@ class Inventory:
         """Changes the quantity of a chemical, increase or decrease"""
         obj = self.find_chemical(name)
         if obj is not None:
-            if obj.quantity + change > 0:
+            if obj.quantity + change >= 0:
                 obj.quantity += change
                 print(f"{obj.name} sucessfully updated from '{obj.quantity - change}' to '{obj.quantity}' kg.",end='\n')
                 return
